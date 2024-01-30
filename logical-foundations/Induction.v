@@ -513,11 +513,23 @@ Qed.
 (** Now prove commutativity of multiplication.  You will probably
     want to define and prove a "helper" theorem to be used
     in the proof of this one. Hint: what is [n * (1 + k)]? *)
+(** suppose m * n =  n * m. Then prove (m + 1) * n = n * (m + 1) => m * n + n = n * m + n*)
 (* Bookmark *)
+Lemma mul_n_Sm : forall n m : nat,
+  n * S m = n + n * m.
+Proof.
+  intros n m. induction n as [| n' IHn].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHn. rewrite add_shuffle3. reflexivity.
+Qed.
+
 Theorem mul_comm : forall m n : nat,
   m * n = n * m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m. induction n as [| n' IHn].
+  - simpl. rewrite -> mul_0_r. reflexivity.
+  - simpl. rewrite -> mul_n_Sm. rewrite -> IHn. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, optional (more_exercises)
@@ -535,30 +547,44 @@ Check leb.
 Theorem leb_refl : forall n:nat,
   (n <=? n) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n' IHn].
+  - simpl. reflexivity.
+  - simpl. rewrite -> IHn. reflexivity. 
+Qed.
 
 Theorem zero_neqb_S : forall n:nat,
   0 =? (S n) = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  reflexivity.
+Qed.
 
 Theorem andb_false_r : forall b : bool,
   andb b false = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b. destruct b.
+  - simpl. reflexivity.
+  - simpl. reflexivity.
+Qed.
 
 Theorem plus_leb_compat_l : forall n m p : nat,
   n <=? m = true -> (p + n) <=? (p + m) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p H.
+  induction p as [| p' IHp'].
+  - simpl. rewrite H. reflexivity.
+  - simpl. rewrite IHp'. reflexivity.
+Qed.
 
 Theorem S_neqb_0 : forall n:nat,
   (S n) =? 0 = false.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  reflexivity.
+Qed.
 
+(* Bookmark *)
 Theorem mult_1_l : forall n:nat, 1 * n = n.
 Proof.
+  intros n. induction n as 
   (* FILL IN HERE *) Admitted.
 
 Theorem all3_spec : forall b c : bool,
