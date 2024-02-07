@@ -1316,7 +1316,6 @@ Qed.
 
 (** [] *)
 
-(* Bookmark *)
 (** Before closing the chapter, let's mention one final
     convenience.  As you may have noticed, many proofs perform case
     analysis on a variable right after introducing it:
