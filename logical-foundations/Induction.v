@@ -514,7 +514,6 @@ Qed.
     want to define and prove a "helper" theorem to be used
     in the proof of this one. Hint: what is [n * (1 + k)]? *)
 (** suppose m * n =  n * m. Then prove (m + 1) * n = n * (m + 1) => m * n + n = n * m + n*)
-(* Bookmark *)
 Lemma mul_n_Sm : forall n m : nat,
   n * S m = n + n * m.
 Proof.
@@ -578,14 +577,18 @@ Qed.
 Theorem S_neqb_0 : forall n:nat,
   (S n) =? 0 = false.
 Proof.
-  reflexivity.
+  intros n. destruct n.
+  - reflexivity.
+  - simpl. reflexivity. 
 Qed.
 
 (* Bookmark *)
 Theorem mult_1_l : forall n:nat, 1 * n = n.
 Proof.
-  intros n. induction n as 
-  (* FILL IN HERE *) Admitted.
+ intros n. destruct n.
+ - simpl. reflexivity.
+ - simpl. rewrite add_0_r. reflexivity.
+Qed. 
 
 Theorem all3_spec : forall b c : bool,
   orb
@@ -594,17 +597,26 @@ Theorem all3_spec : forall b c : bool,
          (negb c))
   = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros b c. destruct b.
+  - destruct c. reflexivity. reflexivity.
+  - destruct c. reflexivity. reflexivity.
+Qed.
 
 Theorem mult_plus_distr_r : forall n m p : nat,
   (n + m) * p = (n * p) + (m * p).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p. induction n as [| n In].
+  - simpl. reflexivity.
+  - simpl. rewrite -> In. rewrite -> add_assoc. reflexivity.
+Qed.
 
 Theorem mult_assoc : forall n m p : nat,
   n * (m * p) = (n * m) * p.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n m p. induction n as [| n In].
+  - simpl. reflexivity.
+  - simpl. rewrite -> In. rewrite -> mult_plus_distr_r. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (eqb_refl) *)
@@ -612,7 +624,10 @@ Proof.
 Theorem eqb_refl : forall n : nat,
   (n =? n) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n In].
+  - reflexivity.
+  - simpl. rewrite -> In. reflexivity.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, standard, optional (add_shuffle3')
