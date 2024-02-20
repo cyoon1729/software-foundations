@@ -843,6 +843,7 @@ Fixpoint eqb (n m : nat) : bool :=
             end
   end.
 
+Definition neqb (n m : nat) : bool := negb (eqb n m).
 (** Similarly, the [leb] function tests whether its first argument is
     less than or equal to its second argument, yielding a boolean. *)
 
