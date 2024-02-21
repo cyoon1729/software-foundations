@@ -73,7 +73,8 @@ Theorem silly_ex : forall p,
   even p = true ->
   odd (S p) = true.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros p H1 H2 H3. apply H2. apply H1. apply H3.
+Qed.
 (** [] *)
 
 (** To use the [apply] tactic, the (conclusion of the) fact
@@ -109,7 +110,11 @@ Theorem rev_exercise1 : forall (l l' : list nat),
   l = rev l' ->
   l' = rev l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros l l' H.
+  rewrite H. 
+  symmetry.
+  apply rev_involutive.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard, optional (apply_rewrite)
@@ -186,14 +191,17 @@ Proof.
   transitivity [c;d].
   apply eq1. apply eq2.   Qed.
 
+  (* bookmark *)
 (** **** Exercise: 3 stars, standard, optional (trans_eq_exercise) *)
 Example trans_eq_exercise : forall (n m o p : nat),
      m = (minustwo o) ->
      (n + p) = m ->
      (n + p) = (minustwo o).
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n m o p H1 H2. 
+  transitivity m. apply H2. apply H1. 
+Qed.
+  (** [] *)
 
 (* ################################################################# *)
 (** * The [injection] and [discriminate] Tactics *)
@@ -279,8 +287,12 @@ Example injection_ex3 : forall (X : Type) (x y z : X) (l j : list X),
   j = z :: l ->
   x = y.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros X x y z l j H1 H2.
+  injection H1 as IH1 IH2. 
+  assert (H3: y :: l = z :: l).
+  { rewrite IH2. apply H2. }
+  injection H3 as IH3. rewrite IH1. rewrite IH3. reflexivity.
+Qed.
 
 (** So much for injectivity of constructors.  What about disjointness? *)
 
@@ -327,7 +339,8 @@ Example discriminate_ex3 :
     x :: y :: l = [] ->
     x = z.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X x y z l j contra. discriminate contra.
+Qed.
 (** [] *)
 
 (** For a slightly more involved example, we can use [discriminate] to
@@ -359,6 +372,7 @@ Proof.
     intros H. discriminate H.
 Qed.
 
+(* BOOKMARK *)
 (** The injectivity of constructors allows us to reason that
     [forall (n m : nat), S n = S m -> n = m].  The converse of this
     implication is an instance of a more general fact about both
