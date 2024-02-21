@@ -372,7 +372,6 @@ Proof.
     intros H. discriminate H.
 Qed.
 
-(* BOOKMARK *)
 (** The injectivity of constructors allows us to reason that
     [forall (n m : nat), S n = S m -> n = m].  The converse of this
     implication is an instance of a more general fact about both
@@ -607,7 +606,12 @@ Proof.
 Theorem eqb_true : forall n m,
   n =? m = true -> n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n. induction n as [| n' IH].
+  - simpl. intros m eq. destruct m. reflexivity. discriminate. 
+  - simpl. intros m eq. destruct m.
+    * discriminate.
+    * apply f_equal. apply IH. apply eq.
+Qed.
 (** [] *)
 
 (** **** Exercise: 2 stars, advanced (eqb_true_informal)
@@ -629,8 +633,17 @@ Theorem plus_n_n_injective : forall n m,
   n + n = m + m ->
   n = m.
 Proof.
-  (* FILL IN HERE *) Admitted.
-(** [] *)
+  intros n. induction n as [| n' IH].
+  - intros m eq. simpl in eq. destruct m. reflexivity. discriminate.
+  - intros m eq. simpl in eq. destruct m as [|m'].
+    * discriminate.
+    * simpl in eq. injection eq as eq2. 
+      rewrite <- plus_n_Sm in eq2.
+      rewrite <- plus_n_Sm in eq2.
+      injection eq2 as eq3.
+      apply IH in eq3.
+      rewrite eq3. reflexivity.
+Qed.
 
 (** The strategy of doing fewer [intros] before an [induction] to
     obtain a more general IH doesn't always work by itself; sometimes
@@ -731,12 +744,20 @@ Proof.
 (** **** Exercise: 3 stars, standard, especially useful (gen_dep_practice)
 
     Prove this by induction on [l]. *)
-
+      (* BOOKMARK *)
 Theorem nth_error_after_last: forall (n : nat) (X : Type) (l : list X),
   length l = n ->
   nth_error l n = None.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros n X l.
+  generalize dependent n.
+  induction l as [|l' IH].
+  - intros n. simpl. reflexivity.
+  - intros n. destruct n.
+    * simpl. discriminate.
+    * simpl. intros eq. injection eq as eq'.
+      apply IHIH in eq'. apply eq'.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -921,7 +942,22 @@ Theorem combine_split : forall X Y (l : list (X * Y)) l1 l2,
   split l = (l1, l2) ->
   combine l1 l2 = l.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros X Y l.
+  induction l as [| h t IH].
+  - intros l1 l2 H.
+    injection H as H'.
+    symmetry in H. symmetry in H'.
+    rewrite H'. rewrite H.
+    reflexivity.
+  - intros l1 l2 H.
+    destruct h as [a b].
+    simpl in H.
+    destruct (split t) as [t1 t2].
+    injection H as H1 H2.
+    rewrite <- H1. rewrite <- H2.
+    simpl. 
+    rewrite -> IH. reflexivity. reflexivity.
+Qed.
 (** [] *)
 
 (** The [eqn:] part of the [destruct] tactic is optional; although
@@ -996,7 +1032,23 @@ Theorem bool_fn_applied_thrice :
   forall (f : bool -> bool) (b : bool),
   f (f (f b)) = f b.
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros f b.
+  destruct (f true) eqn:Ht.
+  - destruct (f false) eqn:Hf.
+    * destruct b eqn:bt.
+      + rewrite Ht. rewrite Ht. apply Ht.
+      + rewrite Hf. rewrite Ht. apply Ht.
+    * destruct b eqn:bt.
+      + rewrite Ht. rewrite Ht. apply Ht.
+      + rewrite Hf. rewrite Hf. apply Hf.
+  - destruct (f false) eqn:Hf.
+    * destruct b eqn:bt.
+      + rewrite Ht. rewrite Hf. apply Ht.
+      + rewrite Hf. rewrite Ht. apply Hf.
+    * destruct b eqn:bt.
+      + rewrite Ht. rewrite Hf. apply Hf.
+      + rewrite Hf. rewrite Hf. apply Hf.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -1072,7 +1124,7 @@ Proof.
 
 (* ################################################################# *)
 (** * Additional Exercises *)
-
+(* BOOKMARK *)
 (** **** Exercise: 3 stars, standard (eqb_sym) *)
 Theorem eqb_sym : forall (n m : nat),
   (n =? m) = (m =? n).
